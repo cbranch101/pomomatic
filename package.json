@@ -10,9 +10,12 @@
   "author": "james.a.forbes@gmail.com <=> (http://james-forbes.com)",
   "license": "ISC",
   "dependencies": {
+    "bluebird": "^3.2.2",
     "bootstrap": "^3.3.5",
     "commander": "^2.8.1",
     "mithril": "^0.2.0",
+    "q": "^1.4.1",
+    "timer-stopwatch": "^0.2.0",
     "watch": "^0.16.0"
   },
   "devDependencies": {

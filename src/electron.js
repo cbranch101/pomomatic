@@ -1,7 +1,11 @@
-var app = require('app');  // Module to control application life.
+var app = require('app');  
 var BrowserWindow = require('browser-window');  // Module to create native browser window.
 var path = require("path")
 var globalShortcut = require('global-shortcut');
+var Tray = require('tray');
+var Menu = require('menu');
+var Timer = require('./models/timer.js');
+
 
 var program = require("commander")
   .option("-d, --dev-tools", "Open Dev Tools on start up")
@@ -38,6 +42,12 @@ app.on('ready', function() {
 
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 1000, height: 600, closable : false });
+
+  var iconPath = path.join(__dirname, 'assets/check.png');
+  appIcon = new Tray(iconPath);
+  // Timer.onTick(function(time, formattedTime){
+  //   appIcon.setTitle(formattedTime);
+  // });
 
   // and load the index.html of the app.
   mainWindow.loadUrl('file://' + path.resolve(__dirname,'../index.html'));
