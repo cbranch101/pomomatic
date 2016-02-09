@@ -25,6 +25,7 @@ app.on('window-all-closed', function() {
 });
 
 module.exports.appIcon = null;
+module.exports.mainWindow = null;
 
 // This method will be called when Electron has done everything
 // initialization and ready for creating browser windows.
@@ -42,11 +43,12 @@ app.on('ready', function() {
 
 
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 1000, height: 600});
+  mainWindow = new BrowserWindow({width: 1000, height: 600, frame : false});
 
   var iconPath = path.join(__dirname, 'assets/check.png');
   appIcon = new Tray(iconPath);
   module.exports.appIcon = appIcon;
+  module.exports.mainWindow = mainWindow;
 
   // start the timer
 

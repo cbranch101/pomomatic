@@ -48,7 +48,7 @@ Timer.changeState = function(newState) {
 
 Timer.startTimer = function(duration, duringState, completedState, cancelledState) {
 	Timer.changeState(duringState);
-	countDown = new Stopwatch(duration, {refreshRateMS : 1000});
+	countDown = new Stopwatch(duration, {refreshRateMS : 200});
 	countDown.start();
 	countDown.onTime(Timer.advanceTick);
 	console.log('changing to :', timerState);
@@ -80,6 +80,7 @@ Timer.onTick = function(callback) {
 }
 
 Timer.advanceTick = function(time){
+	console.log('advance tick', time);
 	var formattedTime = getTimeString(time.ms);
 	countdownCallbacks.forEach(function(callback){
 		callback(time, formattedTime);
