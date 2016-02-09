@@ -1,7 +1,6 @@
 var Q = require('q');
 var Timer = module.exports;
 var Stopwatch = require('timer-stopwatch');
-const ipcRenderer = require('electron').ipcRenderer;
 
 var countdownCallbacks = [];
 var changeCallbacks = [];

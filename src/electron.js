@@ -44,15 +44,21 @@ app.on('ready', function() {
 
 
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 1000, height: 600, frame : false});
+  mainWindow = new BrowserWindow({width: 500, height: 400, frame : false});
 
   var popupMainWindow = function() {
     mainWindow.show() && mainWindow.focus();
   }
 
+  var toggleMainWindow = function() {
+    mainWindow.isVisible() ? mainWindow.hide() : popupMainWindow();
+  }
+
   var iconPath = path.join(__dirname, 'assets/check.png');
   appIcon = new Tray(iconPath);
   module.exports.mainWindow = mainWindow;
+
+  appIcon.on('click', toggleMainWindow);
 
   // start the timer
 
@@ -68,24 +74,26 @@ app.on('ready', function() {
     mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show(); 
   });
 
-  mainWindow.on('close', function(event){
-    mainWindow.hide();
-  });
+  mainWindow.on('close', mainWindow.hide);
+
+  mainWindow.on('blur', mainWindow.hide);
 
   Timer.onTick(function(time, formattedTime){
     appIcon.setTitle(formattedTime);
   });
 
   Timer.onChange(function(timerState){
-      if(timerState === 'pre_pomodoro' || 'pre_break') {
+      if(timerState === 'pre_pomodoro' || timerState === 'pre_break') {
         popupMainWindow();
         appIcon.setTitle(''); 
       }
 
-      if(timerState === 'in_break' || 'in_pomodoro') {
+      if(timerState === 'in_break' || timerState === 'in_pomodoro') {
         mainWindow.hide();
       }
   });
+
+  app.on('activate', toggleMainWindow);
 
   // Emitted when the window is closed.
 });

@@ -38,6 +38,7 @@
 //     try {
 //       var evald = eval(""+file_text)
 //     } catch(e) {
+//     	console.log("Error in :", require_path);
 //       console.error("Patch:", e.stack)
 //       return;
 //     } finally {
