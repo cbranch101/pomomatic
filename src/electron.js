@@ -1,7 +1,10 @@
-var app = require('app');  // Module to control application life.
+var app = require('app');  
 var BrowserWindow = require('browser-window');  // Module to create native browser window.
 var path = require("path")
 var globalShortcut = require('global-shortcut');
+var Tray = require('tray');
+var Menu = require('menu');
+const ipcMain = require('electron').ipcMain;
 
 var program = require("commander")
   .option("-d, --dev-tools", "Open Dev Tools on start up")
@@ -21,6 +24,8 @@ app.on('window-all-closed', function() {
   }
 });
 
+module.exports.appIcon = null;
+
 // This method will be called when Electron has done everything
 // initialization and ready for creating browser windows.
 app.on('ready', function() {
@@ -37,7 +42,13 @@ app.on('ready', function() {
 
 
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 1000, height: 600, closable : false });
+  mainWindow = new BrowserWindow({width: 1000, height: 600});
+
+  var iconPath = path.join(__dirname, 'assets/check.png');
+  appIcon = new Tray(iconPath);
+  module.exports.appIcon = appIcon;
+
+  // start the timer
 
   // and load the index.html of the app.
   mainWindow.loadUrl('file://' + path.resolve(__dirname,'../index.html'));
@@ -52,7 +63,6 @@ app.on('ready', function() {
   });
 
   mainWindow.on('close', function(event){
-    event.preventDefault();
     mainWindow.hide();
   });
 

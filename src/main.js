@@ -1,4 +1,4 @@
-var component = require("./components/example")
+var component = require("./components/timer.js")
 
 var m = require("mithril")
 
