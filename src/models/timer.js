@@ -1,8 +1,10 @@
 var Q = require('q');
 var Timer = module.exports;
 var Stopwatch = require('timer-stopwatch');
+const ipcRenderer = require('electron').ipcRenderer;
 
 var countdownCallbacks = [];
+var changeCallbacks = [];
 var currentTimer = null;
 var timerState = 'pre_pomodoro';
 
@@ -10,8 +12,7 @@ Timer.getTimer = function(duration) {
 	var deferred = Q.defer();
 	setTimeout(function(){		
 			deferred.resolve();
-		}, duration);
-
+	}, duration);
 	deferred.cancel = function() {
 		deferred.reject();
 	}
@@ -23,19 +24,30 @@ Timer.getTimer = function(duration) {
 	};
 }
 
+Timer.getState = function() {
+	return timerState;
+}
+
 Timer.cancelCurrentTimer = function() {
 	currentTimer.cancel();
 }
 
 var endTimer = function(newState, countDown) {
-	timerState = newState;
 	currentTimer = null;
 	console.log('changing to :', timerState);
 	countDown.stop();
+	Timer.changeState(newState);
+}
+
+Timer.changeState = function(newState) {
+	timerState = newState;
+	changeCallbacks.forEach(function(callback){
+		callback(timerState);
+	});
 }
 
 Timer.startTimer = function(duration, duringState, completedState, cancelledState) {
-	timerState = duringState;
+	Timer.changeState(duringState);
 	countDown = new Stopwatch(duration, {refreshRateMS : 1000});
 	countDown.start();
 	countDown.onTime(Timer.advanceTick);
@@ -44,26 +56,38 @@ Timer.startTimer = function(duration, duringState, completedState, cancelledStat
 		throw new Error("Can't have multiple timers at once");
 	}
 	currentTimer = Timer.getTimer(duration);
-	currentTimer.promise.then(() => endTimer(completedState, countDown))
-	.catch(() => endTimer(cancelledState, countDown))
+	currentTimer.promise.then(function(){
+		endTimer(completedState, countDown)
+	})
+	.catch(function(){
+		endTimer(cancelledState, countDown);
+	})
 	return currentTimer.promise;
 }
 
 Timer.startBreak = function(){
-	return Timer.startTimer(1000 * 60 * 5, 'in_break', 'pre_pomodoro', 'pre_pomodoro');
+	var duration = 1000 * 60 * 5;
+	return Timer.startTimer(5000, 'in_break', 'pre_pomodoro', 'pre_pomodoro');
 }
 
 Timer.startPomodoro = function() {
-	return Timer.startTimer(1000 * 60 * 25, 'in_pomodoro', 'pre_break', 'pre_pomodoro');
+	var duration = 1000 * 60 * 25;
+	return Timer.startTimer(10000, 'in_pomodoro', 'pre_break', 'pre_pomodoro');
 }
 
 Timer.onTick = function(callback) {
 	countdownCallbacks.push(callback);
 }
 
-Timer.advanceTick = function(time) {
+Timer.advanceTick = function(time){
 	var formattedTime = getTimeString(time.ms);
-	countdownCallbacks.forEach((callback) => callback(time, formattedTime));
+	countdownCallbacks.forEach(function(callback){
+		callback(time, formattedTime);
+	});
+}
+
+Timer.onChange = function(callback) {
+	changeCallbacks.push(callback);
 }
 
 var stringPadLeft = function(string, pad, length) {
@@ -79,9 +103,3 @@ var getTimeString = function(milliseconds){
 
 
 
-
-
-
-// Timer.startTimer(1000).then(function(){
-// 	Timer.cancelTimer(timer);
-// });
