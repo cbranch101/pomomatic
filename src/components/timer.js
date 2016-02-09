@@ -1,6 +1,6 @@
 var m = require("mithril");
-var Timer = require('../models/timer.js');
 const remote = require('electron').remote.require('./electron.js');
+var Timer = remote.Timer;
 
 var stateMap = {
 	'pre_pomodoro' : {
@@ -8,9 +8,6 @@ var stateMap = {
 		startEvent : {
 			'name' : 'Start Work Session',
 			'event' : 'startPomodoro',
-		},
-		on_change : function() {
-			remote.appIcon.setTitle('');
 		},
 	},
 	'in_pomodoro' : {
@@ -23,9 +20,6 @@ var stateMap = {
 			'name' : 'Start Break',
 			'event' : 'startBreak',
 		},
-		on_change : function() {
-			remote.appIcon.setTitle('');
-		}
 	},
 	'in_break' : {
 		header : "On Break",
@@ -38,13 +32,7 @@ module.exports = {
 		var ctrl = this;
 		ctrl.timerState = 'pre_pomodoro';
 		ctrl.inputValue = m.prop("")
-		Timer.onTick(function(time, formattedTime){
-			console.log("ticking", formattedTime);
-			remote.appIcon.setTitle(formattedTime);
-		});
 		Timer.onChange(function(newState){
-			remote.mainWindow.show();
-			remote.mainWindow.focus();
 			ctrl.timerState = newState;
 			if(stateMap[newState]['on_change']) stateMap[newState]['on_change']();
 			m.redraw();
@@ -55,7 +43,6 @@ module.exports = {
 	},
 
 	view: function(ctrl){
-		console.log(ctrl);
 		return subView(ctrl);
 	}
 }

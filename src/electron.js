@@ -3,8 +3,8 @@ var BrowserWindow = require('browser-window');  // Module to create native brows
 var path = require("path")
 var globalShortcut = require('global-shortcut');
 var Tray = require('tray');
+var Timer = require('./models/timer.js');
 var Menu = require('menu');
-const ipcMain = require('electron').ipcMain;
 
 var program = require("commander")
   .option("-d, --dev-tools", "Open Dev Tools on start up")
@@ -26,6 +26,7 @@ app.on('window-all-closed', function() {
 
 module.exports.appIcon = null;
 module.exports.mainWindow = null;
+module.exports.Timer = Timer;
 
 // This method will be called when Electron has done everything
 // initialization and ready for creating browser windows.
@@ -45,9 +46,12 @@ app.on('ready', function() {
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 1000, height: 600, frame : false});
 
+  var popupMainWindow = function() {
+    mainWindow.show() && mainWindow.focus();
+  }
+
   var iconPath = path.join(__dirname, 'assets/check.png');
   appIcon = new Tray(iconPath);
-  module.exports.appIcon = appIcon;
   module.exports.mainWindow = mainWindow;
 
   // start the timer
@@ -66,6 +70,21 @@ app.on('ready', function() {
 
   mainWindow.on('close', function(event){
     mainWindow.hide();
+  });
+
+  Timer.onTick(function(time, formattedTime){
+    appIcon.setTitle(formattedTime);
+  });
+
+  Timer.onChange(function(timerState){
+      if(timerState === 'pre_pomodoro' || 'pre_break') {
+        popupMainWindow();
+        appIcon.setTitle(''); 
+      }
+
+      if(timerState === 'in_break' || 'in_pomodoro') {
+        mainWindow.hide();
+      }
   });
 
   // Emitted when the window is closed.

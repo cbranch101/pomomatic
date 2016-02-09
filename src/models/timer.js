@@ -80,7 +80,6 @@ Timer.onTick = function(callback) {
 }
 
 Timer.advanceTick = function(time){
-	console.log('advance tick', time);
 	var formattedTime = getTimeString(time.ms);
 	countdownCallbacks.forEach(function(callback){
 		callback(time, formattedTime);
