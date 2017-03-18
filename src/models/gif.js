@@ -1,7 +1,7 @@
 var Gif = module.exports;
 
 var gifCounts = {
-	pre_pomodoro : 4,
+	pre_pomodoro : 3,
 	pre_break : 3,
 };
 

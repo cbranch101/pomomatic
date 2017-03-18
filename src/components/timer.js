@@ -4,25 +4,27 @@ var Timer = remote.Timer;
 var Gif = require('../models/gif.js');
 
 var stateMap = {
-	'pre_pomodoro' : {
+	pre_pomodoro : {
 		header : "Get Ready",
 		startEvent : {
-			'name' : 'Start Work Session',
-			'event' : 'startPomodoro',
+			name : 'Start Work Session',
+			button_class : 'info',
+			event : 'startPomodoro',
 		},
 	},
-	'in_pomodoro' : {
+	in_pomodoro : {
 		header : "In Session",
 		cancelTitle : "Cancel Session", 
 	},
-	'pre_break' : {
+	pre_break : {
 		header : "Pomodoro Finished",
 		startEvent : {
-			'name' : 'Start Break',
-			'event' : 'startBreak',
+			name : 'Start Break',
+			button_class : 'success',
+			event : 'startBreak',
 		},
 	},
-	'in_break' : {
+	in_break : {
 		header : "On Break",
 		cancelTitle : "Cancel Break",
 	},
@@ -48,6 +50,7 @@ module.exports = {
 	},
 
 	view: function(ctrl){
+		console.log('rendering');
 		return subView(ctrl);
 	}
 }
@@ -63,7 +66,7 @@ var gifView = function(state) {
 }
 
 var startButton = function(ctrl, config) {
-	return config.startEvent ? m("button.btn.btn-primary-btn-lg",
+	return config.startEvent ? m("button.btn-lg.btn-" + config.startEvent.button_class,
 		{onclick : function(){
 			ctrl[config.startEvent['event']]();
 		}},
@@ -72,7 +75,7 @@ var startButton = function(ctrl, config) {
 }
 
 var cancelButton = function(ctrl, config) {
-	return config.cancelTitle ? m("button.btn.btn-primary-btn-lg",
+	return config.cancelTitle ? m("button.btn-lg.btn-danger",
 		{onclick : function(){
 			ctrl.cancelTimer();
 		}},

@@ -44,7 +44,7 @@ app.on('ready', function() {
 
 
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 500, height: 400, frame : false});
+  mainWindow = new BrowserWindow({width: 500, height: 500, frame : false});
 
   var popupMainWindow = function() {
     mainWindow.show() && mainWindow.focus();
@@ -54,7 +54,7 @@ app.on('ready', function() {
     mainWindow.isVisible() ? mainWindow.hide() : popupMainWindow();
   }
 
-  var iconPath = path.join(__dirname, 'assets/check.png');
+  var iconPath = path.join(__dirname, 'assets/tray-icon.png');
   appIcon = new Tray(iconPath);
   module.exports.mainWindow = mainWindow;
 

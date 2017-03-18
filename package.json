@@ -18,5 +18,8 @@
     "q": "^1.4.1",
     "timer-stopwatch": "^0.2.0",
     "watch": "^0.16.0"
+  },
+  "devDependencies": {
+    "electron-packager": "^5.2.1"
   }
 }

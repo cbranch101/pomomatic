@@ -33,13 +33,13 @@ Timer.cancelCurrentTimer = function() {
 
 var endTimer = function(newState, countDown) {
 	currentTimer = null;
-	console.log('changing to :', timerState);
 	countDown.stop();
 	Timer.changeState(newState);
 }
 
 Timer.changeState = function(newState) {
 	timerState = newState;
+	console.log('changing to :', timerState);
 	changeCallbacks.forEach(function(callback){
 		callback(timerState);
 	});
@@ -50,7 +50,6 @@ Timer.startTimer = function(duration, duringState, completedState, cancelledStat
 	countDown = new Stopwatch(duration, {refreshRateMS : 200});
 	countDown.start();
 	countDown.onTime(Timer.advanceTick);
-	console.log('changing to :', timerState);
 	if(currentTimer != null) {
 		throw new Error("Can't have multiple timers at once");
 	}
@@ -66,12 +65,12 @@ Timer.startTimer = function(duration, duringState, completedState, cancelledStat
 
 Timer.startBreak = function(){
 	var duration = 1000 * 60 * 5;
-	return Timer.startTimer(5000, 'in_break', 'pre_pomodoro', 'pre_pomodoro');
+	return Timer.startTimer(duration, 'in_break', 'pre_pomodoro', 'pre_pomodoro');
 }
 
 Timer.startPomodoro = function() {
 	var duration = 1000 * 60 * 25;
-	return Timer.startTimer(10000, 'in_pomodoro', 'pre_break', 'pre_pomodoro');
+	return Timer.startTimer(duration, 'in_pomodoro', 'pre_break', 'pre_pomodoro');
 }
 
 Timer.onTick = function(callback) {
